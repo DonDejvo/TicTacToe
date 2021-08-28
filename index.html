@@ -1,0 +1,76 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="gameContainer">
+        <div class="loadingIntro">
+            <div class="vertically-centered text-centered">
+                <h2 class="loadingText">Click to start</h2>
+                <div class="progressBar">
+                    <div class="progressBar_progress"></div>
+                </div>
+                <p id="loadingProgress">0%</p>
+            </div>
+        </div>
+        <div class="mainMenu">
+            <div class="vertically-centered text-centered">
+                <h1 class="gameTitle">Tic Tac Toe</h1>
+                <ul class="menuList">
+                    <li>
+                        <div class="menuButton" id="playBtn">
+                            <span>1 Player</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="menuButton" id="playBtn2">
+                            <span>2 Players</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="menuButton" id="creditBtn">
+                            <span>Credit</span>
+                        </div>
+                    </li>
+                </ul>
+                <div class="credit">
+                    <p>This project was created as final asignment for subject of programming. You are free to use this project for all personal purposes. No direct copying is allowed. <br>Created by DonDejvo (David Dolejsi). </p>
+                    <div class="menuButton" id="backBtn">
+                        <span>Back</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <canvas id="game"></canvas>
+            <div class="header">
+                <div class="player player_active">
+                    <span id="playerX"></span>
+                    <br>
+                    <span class="symbol" style="color:blue;">&times;</span>
+                </div>
+                <div class="player" style="text-align: right; float: right;">
+                    <span id="playerO"></span>
+                    <br>
+                    <span class="symbol" style="color:red;">o</span>
+                </div>
+            </div>
+            <div class="footer">
+                <div>
+                    <button id="zoom_in-btn" class="button">Zoom in</button>
+                    <button id="zoom_out-btn" class="button">Zoom out</button>
+                </div>
+                <div>
+                    <button id="give_up-btn" class="button">New game</button>
+                    <button id="back-btn" class="button">Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="src/main.js" type="module"></script>
+</body>
+</html>
