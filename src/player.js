@@ -85,7 +85,7 @@ export const player = (() => {
                                     }
 
                                     if(connected >= 4) value = 1000000;
-                                    else if(connected == 3 && bothSidesOpen) value = 200000;
+                                    else if(connected == 3 && bothSidesOpen) value = 225000;
                                     else if(connected == 3 && symbol == this._symbol) value = 175000;
                                     else if(connected == 3 && symbol != this._symbol) value = 100000;
                                     else if(count >= 3 && newBothSidesOpen) value = 80000;
