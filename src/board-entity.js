@@ -19,8 +19,8 @@ export const board_entity = (() => {
                 "x": null,
                 "o": null
             }
-            this._startingPLayer = "x";
-            this._playerOn = "x";
+            this._startingPLayer = "o";
+            this._playerOn = "o";
 
             for(let i = 0; i < this._size; ++i) {
                 for(let j = 0; j < this._size; ++j) {
