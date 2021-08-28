@@ -21,6 +21,7 @@ export const board_entity = (() => {
             }
             this._startingPLayer = "o";
             this._playerOn = "o";
+            this._moves = 0;
 
             for(let i = 0; i < this._size; ++i) {
                 for(let j = 0; j < this._size; ++j) {
@@ -111,6 +112,7 @@ export const board_entity = (() => {
             };
         }
         Reset() {
+            this._moves = 0;
             this._selectedTile = null;
             this._gameState = {
                 winner: "-",
@@ -158,7 +160,12 @@ export const board_entity = (() => {
             }
         }
         Play(x, y) {
+            if(this._moves >= this._size * this._size) {
+                return;
+            }
+
             this.Insert(x, y, this._playerOn);
+            ++this._moves;
             
             if(this._gameState.winner != "-") {
                 return;

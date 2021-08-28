@@ -23,6 +23,10 @@ export const player = (() => {
         }
         Play() {
 
+            if(this._board._moves >= this._board._size * this._board._size) {
+                return;
+            }
+
             let bestMoves = [];
             let currentValue = 0;
             const winningCount = 5;
