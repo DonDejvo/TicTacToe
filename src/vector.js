@@ -31,7 +31,7 @@ export class Vector {
     }
     Unit() {
         const z = this.Mag();
-        if(z === 0) {
+        if (z === 0) {
             return this;
         }
         this.x /= z;
@@ -39,7 +39,7 @@ export class Vector {
         return this;
     }
     Mag() {
-        return Math.hypot(this.x, this.y);
+        return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
     }
     Lerp(v1, alpha) {
         this.Add(v1.Clone().Sub(this).Mult(alpha));
@@ -52,12 +52,12 @@ export class Vector {
         return v1.x * v2.x + v1.y * v2.y;
     }
     static Dist(v1, v2) {
-        return Math.hypot(v1.x - v2.x, v1.y - v2.y);
+        return Math.sqrt(Math.pow((v1.x - v2.x), 2) + Math.pow((v1.y - v2.y), 2));
     }
     static AngleBetween(v1, v2) {
         const z1 = v1.Mag();
         const z2 = v2.Mag();
-        if(z1 === 0 || z2 === 0) {
+        if (z1 === 0 || z2 === 0) {
             return 0;
         }
         return Math.acos(Vector.Dot(v1, v2) / (z1 * z2));
