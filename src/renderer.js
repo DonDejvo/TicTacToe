@@ -1,3 +1,6 @@
+import { SceneManager } from "./scene-manager.js";
+import { Scene } from "./scene.js";
+
 export class Renderer {
     constructor(width, height, container, canvas) {
         this._width = width;
@@ -5,6 +8,7 @@ export class Renderer {
         this._container = container;
         this._canvas = canvas;
         this._bgColor = "black";
+        this.scenes = new SceneManager();
         this._Init();
     }
     _Init() {
@@ -21,7 +25,54 @@ export class Renderer {
             this._OnResize();
         });
 
+        this._isTouchDevice = "ontouchstart" in document;
+        this._eventByDevice = navigator.userAgent.match(/ipod|ipad|iphone/i) ? "touchstart" : "click";
+        this.mouse = {x: null, y: null, pressed: false};
 
+        this._InitEventListeners();
+
+    }
+    _HandleMouseEvent(x, y, type) {
+        const boundingRect = this.dimension;
+        this.mouse.x = (x - boundingRect.left) / this._scale;
+        this.mouse.y = (y - boundingRect.top) / this._scale;
+
+        if (this.scenes.currentScene) {
+            const pos = this._ApplyCamera(this.scenes.currentScene, this.mouse.x, this.mouse.y);
+            this.scenes.currentScene._HandleListeners(type, {
+                x: pos.x,
+                y: pos.y,
+                mousePressed: this.mouse.pressed
+            });
+        }
+    }
+    _InitEventListeners() {
+        this._canvas.addEventListener(this._isTouchDevice ? "touchstart" : "mousedown", (e) => {
+            if(e.changedTouches) e = e.changedTouches[0];
+
+            this.mouse.pressed = true;
+            this._HandleMouseEvent(e.pageX, e.pageY, "mousedown");
+            
+        });
+
+        this._canvas.addEventListener(this._isTouchDevice ? "touchmove" : "mousemove", (e) => {
+            if(e.changedTouches) e = e.changedTouches[0];
+
+            this._HandleMouseEvent(e.pageX, e.pageY, "mousemove");
+        });
+
+        this._canvas.addEventListener(this._isTouchDevice ? "touchend" : "mouseup", (e) => {
+            if(e.changedTouches) e = e.changedTouches[0];
+
+            this.mouse.pressed = false;
+            this._HandleMouseEvent(e.pageX, e.pageY, "mouseup");
+        });
+
+        this._container.addEventListener(this._eventByDevice, () => {
+            if(this.scenes.currentScene) {
+                this.scenes.currentScene.OnClick();
+            }
+        });
     }
     _OnResize() {
         const [width, height] = [document.body.clientWidth, document.body.clientHeight];
@@ -33,10 +84,11 @@ export class Renderer {
         this._container.style.transform = `translate(-50%, -50%) scale(${this._scale})`;
         this._context.imageSmoothingEnabled = false;
     }
-    SetBgColor(c) {
+    set bgColor(c) {
         this._bgColor = c;
     }
-    Render(scene) {
+    Render() {
+        const scene = this.scenes.currentScene;
         if(!scene) {
             return;
         }
@@ -69,7 +121,7 @@ export class Renderer {
     get scale() {
         return this._scale;
     }
-    ApplyCamera(scene, x, y) {
+    _ApplyCamera(scene, x, y) {
         return {
             x: (x - this._width / 2) / scene._camera._scale + scene._camera._pos.x,
             y: (y - this._height / 2) / scene._camera._scale + scene._camera._pos.y

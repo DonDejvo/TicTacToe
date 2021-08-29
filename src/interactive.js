@@ -1,5 +1,6 @@
 export class Interactive {
     constructor(params) {
+        this._params = params;
         this._listeners = {};
     }
     _HandleListeners(ev, params) {

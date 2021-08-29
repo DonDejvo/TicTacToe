@@ -7,8 +7,8 @@ export class Camera {
         this._scale = 1.0;
         this._target = null;
         this._vel = new Vector(0, 0);
-        this._scaling = null;
-        this._moving = null;
+        this._scaling = [];
+        this._moving = [];
     }
     Follow(target) {
         this._target = target;
@@ -23,28 +23,34 @@ export class Camera {
         this._scale = s;
     }
     ScaleTo(s, dur, timing = "linear") {
-        this._scaling = {
+        this._scaling.push({
             counter: 0,
             dur: dur,
             from: this._scale,
             to: s,
             timing: timing
-        };
+        });
     }
     MoveTo(p, dur, timing = "linear") {
-        this._moving = {
+        this._moving.push({
             counter: 0,
             dur: dur,
             from: this._pos.Clone(),
             to: p,
             timing: timing
-        };
+        });
     }
     Reset() {
         this._pos = new Vector(0, 0);
         this._scale = 1;
-        this._scaling = null;
-        this._moving = null;
+        this._scaling = [];
+        this._moving = [];
+    }
+    get scaling() {
+        return this._scaling.length;
+    }
+    get moving() {
+        return this._moving.length;
     }
     Update(elapsedTimeS) {
         if(this._target) {
@@ -59,8 +65,8 @@ export class Camera {
             vel.Mult(elapsedTimeS);
             this._pos.Add(vel);
         }
-        if(this._scaling) {
-            const anim = this._scaling;
+        if(this._scaling.length) {
+            const anim = this._scaling[0];
             anim.counter += elapsedTimeS * 1000;
             const progress = Math.min(anim.counter / anim.dur, 1);
             let value;
@@ -77,11 +83,11 @@ export class Camera {
             }
             this._scale = math.lerp(value, anim.from, anim.to);
             if(progress == 1) {
-                this._scaling = null;
+                this._scaling.shift();
             }
         }
-        if(this._moving) {
-            const anim = this._moving;
+        if(this._moving.length) {
+            const anim = this._moving[0];
             anim.counter += elapsedTimeS * 1000;
             const progress = Math.min(anim.counter / anim.dur, 1);
             let value;
@@ -98,7 +104,7 @@ export class Camera {
             }
             this._pos = anim.from.Clone().Lerp(anim.to, value);
             if(progress == 1) {
-                this._moving = null;
+                this._moving.shift();
             }
         }
     }

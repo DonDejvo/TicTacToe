@@ -27,6 +27,9 @@ export const physics = (() => {
         Update(_) {
             
         }
+        Contains(_) {
+            return false;
+        }
     }
 
     class Box extends Body {
@@ -53,31 +56,10 @@ export const physics = (() => {
         }
     }
 
-    class Line extends Body {
-        constructor(params) {
-            super(params);
-            this._start = new Vector(this._params.start.x, this._params.start.y);
-            this._end = new Vector(this._params.end.x, this._params.end.y);
-        }
-        InitComponent() {
-            super.InitComponent();
-            this._start.Add(this._pos);
-            this._end.Add(this._pos);
-        }
-        Update(_) {
-            
-        }
-    }
-
-    const GRAVITY = 550;
-
     const ResolveCollision = (mover, platform) => {
         switch(platform.constructor.name) {
             case "Box":
                 ResolveCollisionBox(mover, platform);
-                break;
-            case "Line":
-                ResolveCollisionLine(mover, platform);
                 break;
         }
     };
@@ -138,36 +120,9 @@ export const physics = (() => {
         
     };
 
-    const ResolveCollisionLine = (mover, platform) => {
-        if(!DetectCollisionBoxVsLine(mover, platform)) {
-            return;
-        }
-
-        const vec = mover._pos.Clone().Sub(mover._oldPos);
-        if(vec.y < 0) {
-            return;
-        }
-        
-        const f = (x) => {
-            return platform._start.y + x / (platform._end.x - platform._start.x) * (platform._end.y - platform._start.y);
-        };
-        const leftBottom = Math.max(mover.left - platform._start.x, 0);
-        const rightBottom = Math.min(mover.right - platform._start.x, platform._end.x - platform._start.x);
-
-        const minY = Math.min(f(leftBottom), f(rightBottom));
-        const dy = minY - mover._pos.y;
-        if(dy > mover._height / 2) {
-            return;
-        }
-        mover._pos.y = minY - mover._height / 2 - 0.001;
-        mover._collide.bottom.add(platform);
-    };
-
     const DetectCollision = (body1, body2) => {
         if(body1.constructor.name == "Box" && body2.constructor.name == "Box") {
             return DetectCollisionBoxVsBox(body1, body2);
-        } else if(body1.constructor.name == "Box" && body2.constructor.name == "Line") {
-            return DetectCollisionBoxVsLine(body1, body2);
         }
         return false;
     };
@@ -177,16 +132,8 @@ export const physics = (() => {
         Math.abs(body1._pos.y - body2._pos.y) < (body1._height + body2._height) / 2;
     }
 
-    const DetectCollisionBoxVsLine = (body1, body2) => {
-        const [minX, maxX] = body2._start.x < body2._end.x ? [body2._start.x, body2._end.x] : [body2._end.x, body2._start.x];
-        const [minY, maxY] = body2._start.y < body2._end.y ? [body2._start.y, body2._end.y] : [body2._end.y, body2._start.y];
-        return (body1.left - maxX) * (body1.right - minX) < 0 && (body1.top - maxY) * (body1.bottom - minY) < 0;
-    }
-
     return {
         Box: Box,
-        Line: Line,
-        GRAVITY: GRAVITY,
         ResolveCollision: ResolveCollision,
         DetectCollision: DetectCollision
     }

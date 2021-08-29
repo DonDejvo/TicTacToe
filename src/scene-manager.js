@@ -1,30 +1,27 @@
 export class SceneManager {
     constructor() {
-        this._currentSceneName = null;
+        this._currentScene = null;
         this._scenes = new Map();
     }
     AddScene(n, s) {
         this._scenes.set(n, s);
     }
     PlayScene(n) {
-        this._currentSceneName = n;
-        this._scenes.get(this._currentSceneName).Play();
+        this._currentScene = this._scenes.get(n);
+        this._currentScene.Play();
 
     }
     PauseScene() {
-        if(this._currentSceneName) {
-            this._scenes.get(this._currentSceneName).Pause();
+        if(this._currentScene) {
+            this._currentScene.Pause();
         }
     }
     Update(elapsedTimeS) {
-        if(this._currentSceneName) {
-            this._scenes.get(this._currentSceneName).Update(elapsedTimeS);
+        if(this._currentScene) {
+            this._currentScene.Update(elapsedTimeS);
         }
     }
     get currentScene() {
-        if(!this._currentSceneName) {
-            return null;
-        }
-        return this._scenes.get(this._currentSceneName);
+        return this._currentScene;
     }
 }

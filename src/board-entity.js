@@ -1,10 +1,13 @@
 import { entity } from "./entity.js";
+import { Vector } from "./vector.js";
 
 export const board_entity = (() => {
 
     class BoardController extends entity.Component {
         constructor() {
             super();
+            this.mouseMoved = false;
+            this.mousedownPosition = new Vector();
             this._Init();
         }
         _Init() {

@@ -25,12 +25,12 @@ class Game {
 
         gameScene.SetInteractive(board);
         board.interactive.AddListener("mouseup", (params) => {
-            if(board._scene._mouseMoved) {
+            if(board.mouseMoved) {
                 return;
             }
 
-            if(gameScene._camera._scale != 2 && !gameScene._camera._scaling) {
-                gameScene._camera.MoveTo(gameScene.mousedownPos, 500);
+            if(gameScene._camera._scale != 2 && !gameScene._camera.scaling) {
+                gameScene._camera.MoveTo(board.mousedownPosition, 500);
                 gameScene._camera.ScaleTo(2, 500);
             }
 
@@ -41,59 +41,17 @@ class Game {
         gameScene.Add(board, "board");
 
         gameScene.AddListener("mousedown", (params) => {
-            gameScene._mouseMoved = false;
-            gameScene.mousedownPos = new Vector(params.x, params.y);
+            board.mouseMoved = false;
+            board.mousedownPosition = new Vector(params.x, params.y);
         });
         gameScene.AddListener("mousemove", (params) => {
             if(params.mousePressed) {
-                gameScene._mouseMoved = true;
-                gameScene._camera.SetPosition(gameScene.mousedownPos.Clone().Add(gameScene._camera._pos.Clone().Sub(new Vector(params.x, params.y))));
+                board.mouseMoved = true;
+                gameScene._camera.SetPosition(board.mousedownPosition.Clone().Add(gameScene._camera._pos.Clone().Sub(new Vector(params.x, params.y))));
             }
         });
 
-        this._sceneManager.AddScene("main", gameScene);
-    }
-    _HandleMouseEvent(x, y, type) {
-        const boundingRect = this._renderer.dimension;
-        this._mouse.x = (x - boundingRect.left) / this._renderer.scale;
-        this._mouse.y = (y - boundingRect.top) / this._renderer.scale;
-
-        if (this._sceneManager.currentScene) {
-            const pos = this._renderer.ApplyCamera(this._sceneManager.currentScene, this._mouse.x, this._mouse.y);
-            this._sceneManager.currentScene._HandleListeners(type, {
-                x: pos.x,
-                y: pos.y,
-                mousePressed: this._mouse.pressed
-            });
-        }
-    }
-    _InitListeners() {
-        this._renderer._canvas.addEventListener(this._isTouchDevice ? "touchstart" : "mousedown", (e) => {
-            if(e.changedTouches) e = e.changedTouches[0];
-
-            this._mouse.pressed = true;
-            this._HandleMouseEvent(e.pageX, e.pageY, "mousedown");
-            
-        });
-
-        this._renderer._canvas.addEventListener(this._isTouchDevice ? "touchmove" : "mousemove", (e) => {
-            if(e.changedTouches) e = e.changedTouches[0];
-
-            this._HandleMouseEvent(e.pageX, e.pageY, "mousemove");
-        });
-
-        this._renderer._canvas.addEventListener(this._isTouchDevice ? "touchend" : "mouseup", (e) => {
-            if(e.changedTouches) e = e.changedTouches[0];
-
-            this._mouse.pressed = false;
-            this._HandleMouseEvent(e.pageX, e.pageY, "mouseup");
-        });
-
-        this._renderer._container.addEventListener(this._eventByDevice, () => {
-            if(this._sceneManager.currentScene) {
-                this._sceneManager.currentScene.OnClick();
-            }
-        });
+        this._renderer.scenes.AddScene("main", gameScene);
     }
     _Preload() {
         const loader = new Loader();
@@ -123,20 +81,14 @@ class Game {
     }
     _Init() {
 
+        this._eventByDevice = navigator.userAgent.match(/ipod|ipad|iphone/i) ? "touchstart" : "click";
+
         document.querySelector(".credit").style.display = "none";
 
         this._renderer = new Renderer(480, 720, document.querySelector(".gameContainer"), document.getElementById("game"));
-        this._renderer.SetBgColor("rgb(255, 255, 255)");
-
-        this._sceneManager = new SceneManager();
+        this._renderer.bgColor = "rgb(255, 255, 255)";
 
         this._InitBoard();
-
-        this._isTouchDevice = "ontouchstart" in document;
-        this._eventByDevice = navigator.userAgent.match(/ipod|ipad|iphone/i) ? "touchstart" : "click";
-        this._mouse = {x: null, y: null, pressed: false};
-
-        this._InitListeners();
 
         this._renderer._container.addEventListener(this._eventByDevice, () => {
             document.querySelector(".loadingText").textContent = "Loading...";
@@ -145,9 +97,9 @@ class Game {
 
         document.getElementById("playBtn").addEventListener(this._eventByDevice, () => {
             document.querySelector(".mainMenu").style.display = "none";
-            this._sceneManager.PlayScene("main");
-            this._sceneManager.currentScene._camera.Reset();
-            const board = this._sceneManager.currentScene.Get("board");
+            this._renderer.scenes.PlayScene("main");
+            this._renderer.scenes.currentScene._camera.Reset();
+            const board = this._renderer.scenes.currentScene.Get("board");
             board.GetComponent("BoardController").Reset();
             board.GetComponent("BoardController").SetPlayerX(new player.Human("Player"));
             board.GetComponent("BoardController").SetPlayerO(new player.Bot("Bot"));
@@ -155,9 +107,9 @@ class Game {
         });
         document.getElementById("playBtn2").addEventListener(this._eventByDevice, () => {
             document.querySelector(".mainMenu").style.display = "none";
-            this._sceneManager.PlayScene("main");
-            this._sceneManager.currentScene._camera.Reset();
-            const board = this._sceneManager.currentScene.Get("board");
+            this._renderer.scenes.PlayScene("main");
+            this._renderer.scenes.currentScene._camera.Reset();
+            const board = this._renderer.scenes.currentScene.Get("board");
             board.GetComponent("BoardController").Reset();
             board.GetComponent("BoardController").SetPlayerX(new player.Human("Player 1"));
             board.GetComponent("BoardController").SetPlayerO(new player.Human("Player 2"));
@@ -174,25 +126,25 @@ class Game {
         });
 
         document.getElementById("zoom_out-btn").addEventListener(this._eventByDevice, () => {
-            const camera = this._sceneManager.currentScene._camera;
-            if(!camera._scaling) {
+            const camera = this._renderer.scenes.currentScene._camera;
+            if(!camera.scaling) {
                 camera.ScaleTo(1, 500);
             }
         });
         document.getElementById("zoom_in-btn").addEventListener(this._eventByDevice, () => {
-            const camera = this._sceneManager.currentScene._camera;
-            if(!camera._scaling) {
+            const camera = this._renderer.scenes.currentScene._camera;
+            if(!camera.scaling) {
                 camera.ScaleTo(2, 500);
             }
         });
         document.getElementById("give_up-btn").addEventListener(this._eventByDevice, () => {
-            const board = this._sceneManager.currentScene.Get("board");
+            const board = this._renderer.scenes.currentScene.Get("board");
             board.GetComponent("BoardController").Reset();
             board.GetComponent("BoardController").NextPlayer();
         });
         document.getElementById("back-btn").addEventListener(this._eventByDevice, () => {
             document.querySelector(".mainMenu").style.display = "block";
-            const board = this._sceneManager.PauseScene();
+            const board = this._renderer.scenes.PauseScene();
         });
 
     }
@@ -203,13 +155,13 @@ class Game {
             }
             this._RAF();
             this._Step(timestep - this._previousRAF);
-            this._renderer.Render(this._sceneManager.currentScene);
+            this._renderer.Render();
             this._previousRAF = timestep;
         });
     }
     _Step(elapsedTime) {
         const elapsedTimeS = Math.min(1 / 30, elapsedTime * 0.001);
-        this._sceneManager.Update(elapsedTimeS);
+        this._renderer.scenes.Update(elapsedTimeS);
     }
 }
 
