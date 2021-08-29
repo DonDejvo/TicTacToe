@@ -158,7 +158,7 @@ class BoardController extends Component {
         }
     }
     Play(x, y) {
-        if (this._moves >= this._size * this._size) {
+        if (this._players[this._playerOn] == null || this._moves >= this._size * this._size) {
             return;
         }
         this.Insert(x, y, this._playerOn);

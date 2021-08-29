@@ -1,9 +1,12 @@
 export { Renderer } from "./renderer.js";
 export { Scene } from "./scene.js";
-export * as physics from "./physics.js";
+import * as physics_1 from "./physics.js";
+export { physics_1 as physics };
 export { Entity } from "./entity.js";
-export * as drawable from "./drawable.js";
+import * as drawable_1 from "./drawable.js";
+export { drawable_1 as drawable };
 export { BoardController } from "./board-entity.js";
 export { Vector } from "./vector.js";
 export { Loader } from "./loader.js";
-export * as player from "./player.js";
+import * as player_1 from "./player.js";
+export { player_1 as player };

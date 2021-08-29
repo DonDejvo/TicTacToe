@@ -9,6 +9,7 @@ import {
     Loader,
     player
 } from "./exporter.js";
+import { Player } from "./player.js";
 
 class Game {
     _resources: Map<string, any>;
@@ -108,25 +109,25 @@ class Game {
             this._Preload();
         }, {once: true});
 
-        document.getElementById("playBtn").addEventListener(eventByDevice, () => {
+        const StartGame = (playerX: Player, playerY: Player) => {
             (document.querySelector(".mainMenu") as HTMLElement).style.display = "none";
             this._renderer.scenes.PlayScene("main");
             this._renderer.scenes.currentScene._camera.Reset();
             const boardController = this._renderer.scenes.currentScene.Get("board").GetComponent("BoardController") as BoardController;
             boardController.Reset();
-            boardController.SetPlayerX(new player.Human("Player"));
-            boardController.SetPlayerO(new player.Bot("Bot"));
+            boardController.SetPlayerX(playerX);
+            boardController.SetPlayerO(playerY);
             boardController.NextPlayer();
+        }
+
+        document.getElementById("playBtn").addEventListener(eventByDevice, () => {
+            StartGame(new player.Human("Player"), new player.Bot("Bot"));
         });
         document.getElementById("playBtn2").addEventListener(eventByDevice, () => {
-            (document.querySelector(".mainMenu") as HTMLElement).style.display = "none";
-            this._renderer.scenes.PlayScene("main");
-            this._renderer.scenes.currentScene._camera.Reset();
-            const boardController = this._renderer.scenes.currentScene.Get("board").GetComponent("BoardController") as BoardController;
-            boardController.Reset();
-            boardController.SetPlayerX(new player.Human("Player 1"));
-            boardController.SetPlayerO(new player.Human("Player 2"));
-            boardController.NextPlayer();
+            StartGame(new player.Human("Player 1"), new player.Human("Player 2"));
+        });
+        document.getElementById("playBtn3").addEventListener(eventByDevice, () => {
+            StartGame(new player.Bot("Bot 1"), new player.Bot("Bot 2"));
         });
 
         document.getElementById("creditBtn").addEventListener(eventByDevice, () => {
@@ -158,6 +159,8 @@ class Game {
         document.getElementById("back-btn").addEventListener(eventByDevice, () => {
             (document.querySelector(".mainMenu") as HTMLElement).style.display = "block";
             this._renderer.scenes.PauseScene();
+            const boardController = this._renderer.scenes.currentScene.Get("board").GetComponent("BoardController") as BoardController;
+            boardController._players = [null, null];
         });
 
     }

@@ -175,7 +175,7 @@ class BoardController extends Component {
         }
     }
     Play(x: number, y: number) {
-        if(this._moves >= this._size * this._size) {
+        if(this._players[this._playerOn] == null || this._moves >= this._size * this._size) {
             return;
         }
 
@@ -189,7 +189,7 @@ class BoardController extends Component {
 
         this.NextPlayer();
     }
-    NextPlayer() {    
+    NextPlayer() {
         this._players[this._playerOn].player.Play();
     }
     TogglePlayers() {
