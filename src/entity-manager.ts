@@ -1,4 +1,9 @@
+import { Entity } from "./entity.js";
+
 export class EntityManager {
+    _entities: Entity[];
+    _entitiesMap: Map<string, Entity>;
+    _ids: number;
     constructor() {
         this._entities = [];
         this._entitiesMap = new Map();
@@ -8,8 +13,8 @@ export class EntityManager {
         ++this._ids;
         return "__entity__" + this._ids;
     }
-    Add(e, n) {
-        if (n === undefined) {
+    Add(e: Entity, n?: (string | undefined)) {
+        if(n === undefined) {
             n = this._GenerateName();
         }
         this._entities.push(e);
@@ -17,21 +22,21 @@ export class EntityManager {
         e._parent = this;
         e._name = n;
     }
-    Get(n) {
+    Get(n: string) {
         return this._entitiesMap.get(n);
     }
-    Remove(e) {
+    Remove(e: Entity) {
         const i = this._entities.indexOf(e);
-        if (i < 0) {
+        if(i < 0) {
             return;
         }
         this._entities.splice(i, 1);
     }
-    Filter(cb) {
+    Filter(cb: (_: Entity) => boolean) {
         return this._entities.filter(cb);
     }
-    Update(elapsedTimeS) {
-        for (let e of this._entities) {
+    Update(elapsedTimeS: number) {
+        for(let e of this._entities) {
             e.Update(elapsedTimeS);
         }
     }

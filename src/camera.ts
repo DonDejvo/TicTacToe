@@ -1,6 +1,32 @@
+import { Entity } from "./entity.js";
 import { math } from "./math.js";
 import { Vector } from "./vector.js";
+
+type scaling = {
+    counter: number;
+    dur: number;
+    from: number;
+    to: number;
+    timing: string;
+}
+
+type moving = {
+    counter: number;
+    dur: number;
+    from: Vector;
+    to: Vector;
+    timing: string;
+}
+
+
 export class Camera {
+    _pos: Vector;
+    _scale: number;
+    _target: Entity;
+    _vel: Vector;
+    _scaling: scaling[];
+    _moving: moving[];
+
     constructor() {
         this._pos = new Vector();
         this._scale = 1.0;
@@ -9,19 +35,19 @@ export class Camera {
         this._scaling = [];
         this._moving = [];
     }
-    Follow(target) {
+    Follow(target: Entity) {
         this._target = target;
     }
     Unfollow() {
         this._target = null;
     }
-    SetPosition(p) {
+    SetPosition(p: Vector) {
         this._pos.Copy(p);
     }
-    SetScale(s) {
+    SetScale(s: number) {
         this._scale = s;
     }
-    ScaleTo(s, dur, timing = "linear") {
+    ScaleTo(s: number, dur: number, timing = "linear") {
         this._scaling.push({
             counter: 0,
             dur: dur,
@@ -30,7 +56,7 @@ export class Camera {
             timing: timing
         });
     }
-    MoveTo(p, dur, timing = "linear") {
+    MoveTo(p: Vector, dur: number, timing = "linear") {
         this._moving.push({
             counter: 0,
             dur: dur,
@@ -51,27 +77,25 @@ export class Camera {
     get moving() {
         return this._moving.length;
     }
-    Update(elapsedTimeS) {
-        if (this._target) {
-            if (Vector.Dist(this._pos, this._target._pos) < 1) {
+    Update(elapsedTimeS: number) {
+        if(this._target) {
+            if(Vector.Dist(this._pos, this._target._pos) < 1) {
                 this._pos.Copy(this._target._pos);
-            }
-            else {
+            } else {
                 const t = 4 * elapsedTimeS;
                 this._pos.Lerp(this._target._pos, t);
             }
-        }
-        else {
+        } else {
             const vel = this._vel.Clone();
             vel.Mult(elapsedTimeS);
             this._pos.Add(vel);
         }
-        if (this._scaling.length) {
+        if(this._scaling.length) {
             const anim = this._scaling[0];
             anim.counter += elapsedTimeS * 1000;
             const progress = Math.min(anim.counter / anim.dur, 1);
             let value;
-            switch (anim.timing) {
+            switch(anim.timing) {
                 case "linear":
                     value = progress;
                     break;
@@ -83,16 +107,16 @@ export class Camera {
                     break;
             }
             this._scale = math.lerp(value, anim.from, anim.to);
-            if (progress == 1) {
+            if(progress == 1) {
                 this._scaling.shift();
             }
         }
-        if (this._moving.length) {
+        if(this._moving.length) {
             const anim = this._moving[0];
             anim.counter += elapsedTimeS * 1000;
             const progress = Math.min(anim.counter / anim.dur, 1);
             let value;
-            switch (anim.timing) {
+            switch(anim.timing) {
                 case "linear":
                     value = progress;
                     break;
@@ -104,7 +128,7 @@ export class Camera {
                     break;
             }
             this._pos = anim.from.Clone().Lerp(anim.to, value);
-            if (progress == 1) {
+            if(progress == 1) {
                 this._moving.shift();
             }
         }
