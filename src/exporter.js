@@ -7,3 +7,4 @@ export { BoardController } from "./board-entity.js";
 export { Vector } from "./vector.js";
 export { Loader } from "./loader.js";
 export * as player from "./player.js";
+// fuck
