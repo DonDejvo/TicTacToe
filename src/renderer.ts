@@ -61,7 +61,7 @@ export class Renderer {
 
         this._canvas.addEventListener(isTouchDevice ? "touchstart" : "mousedown", (e) => {
             let x, y;
-            if(e.type == "touchstart") {
+            if(e instanceof TouchEvent) {
                 e = e as TouchEvent;
                 x = e.changedTouches[0].pageX;
                 y = e.changedTouches[0].pageY;
@@ -78,7 +78,7 @@ export class Renderer {
 
         this._canvas.addEventListener(isTouchDevice ? "touchmove" : "mousemove", (e) => {
             let x, y;
-            if(e.type == "touchstart") {
+            if(e instanceof TouchEvent) {
                 e = e as TouchEvent;
                 x = e.changedTouches[0].pageX;
                 y = e.changedTouches[0].pageY;
@@ -93,7 +93,7 @@ export class Renderer {
 
         this._canvas.addEventListener(isTouchDevice ? "touchend" : "mouseup", (e) => {
             let x, y;
-            if(e.type == "touchstart") {
+            if(e instanceof TouchEvent) {
                 e = e as TouchEvent;
                 x = e.changedTouches[0].pageX;
                 y = e.changedTouches[0].pageY;
