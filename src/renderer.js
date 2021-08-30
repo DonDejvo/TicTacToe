@@ -42,7 +42,7 @@ export class Renderer {
         const eventByDevice = navigator.userAgent.match(/ipod|ipad|iphone/i) ? "touchstart" : "click";
         this._canvas.addEventListener(isTouchDevice ? "touchstart" : "mousedown", (e) => {
             let x, y;
-            if (e instanceof TouchEvent) {
+            if (e.type.startsWith("touch")) {
                 e = e;
                 x = e.changedTouches[0].pageX;
                 y = e.changedTouches[0].pageY;
@@ -57,7 +57,7 @@ export class Renderer {
         });
         this._canvas.addEventListener(isTouchDevice ? "touchmove" : "mousemove", (e) => {
             let x, y;
-            if (e instanceof TouchEvent) {
+            if (e.type.startsWith("touch")) {
                 e = e;
                 x = e.changedTouches[0].pageX;
                 y = e.changedTouches[0].pageY;
@@ -71,7 +71,7 @@ export class Renderer {
         });
         this._canvas.addEventListener(isTouchDevice ? "touchend" : "mouseup", (e) => {
             let x, y;
-            if (e instanceof TouchEvent) {
+            if (e.type.startsWith("touch")) {
                 e = e;
                 x = e.changedTouches[0].pageX;
                 y = e.changedTouches[0].pageY;
