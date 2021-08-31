@@ -1,6 +1,6 @@
 import { Component } from "./component.js";
 import { Box } from "./physics.js";
-import { Player } from "./player.js";
+import { Human, Player } from "./player.js";
 import { Vector } from "./vector.js";
 
 type player = { player: Player, score: number }
@@ -11,11 +11,11 @@ class BoardController extends Component {
     _size: number;
     _board: Tile[][];
     _selectedTile: Tile;
-    _gameState: { winner: string, tiles: Tile[] }
+    _gameState: { winner: number, winningTiles: Tile[] }
+    _moves: { x: number, y: number, player: number }[]
     _players: player[];
-    _startingPLayer: string;
+    _startingPlayer: number;
     _playerOn: number;
-    _moves: number;
     constructor() {
         super();
         this.mouseMoved = false;
@@ -27,13 +27,13 @@ class BoardController extends Component {
         this._board = [...new Array(this._size)].map((_, i) => [...new Array(this._size)].map((_, j) => new Tile(j, i)));
         this._selectedTile = null;
         this._gameState = {
-            winner: "-",
-            tiles: []
+            winner: -1,
+            winningTiles: []
         };
+        this._moves = [];
         this._players = [null, null];
-        this._startingPLayer = "o";
-        this.playerOn = this._startingPLayer;
-        this._moves = 0;
+        this._startingPlayer = 1;
+        this._playerOn = this._startingPlayer;
 
         for(let i = 0; i < this._size; ++i) {
             for(let j = 0; j < this._size; ++j) {
@@ -50,27 +50,13 @@ class BoardController extends Component {
         }
 
     }
-    SetPlayerX(player: Player) {
-        this._players[0] = {player: player, score: 0};
-        player._symbol = "x";
-        player._board = this;
-        document.getElementById("playerX").textContent = player._name;
-    }
-    SetPlayerO(player: Player) {
-        this._players[1] = {player: player, score: 0};
-        player._symbol = "o";
-        player._board = this;
-        document.getElementById("playerO").textContent = player._name;
-    }
-    Insert(x: number, y: number, player: number) {
-        const symbol = player == 0 ? "x" : "o";
-        const otherSymbol = symbol == "x" ? "o" : "x";
+    _Insert(x: number, y: number, player: number) {
         const otherPlayer = player == 0 ? 1 : 0;
         const tile = this._board[y][x];
 
         this._selectedTile = tile;
 
-        tile.owner = symbol;
+        tile.owner = player;
         for(let k = 0; k < 8; ++k) {
             const l = (k + 4) % 8;
         
@@ -78,26 +64,30 @@ class BoardController extends Component {
             tile._data[otherPlayer].free[k] = 0;
 
             let nextTile = tile._nb[k];
-            while(nextTile && nextTile.owner != otherSymbol) {
+            while(nextTile && nextTile.owner != otherPlayer) {
                 nextTile._data[player].connected[l] += 1 + tile._data[player].connected[l];
-                if(nextTile.owner == "-") {
+                if(nextTile.owner == -1) {
                     break;
                 }
                 nextTile = nextTile._nb[k];
             }
             nextTile = tile._nb[k];
             let n = 0;
-            while(nextTile && nextTile.owner != symbol) {
+            while(nextTile && nextTile.owner != player) {
                 nextTile._data[otherPlayer].free[l] = n;
                 ++n;
                 nextTile = nextTile._nb[k];
             }
         }
+        this._AddMove(x, y, player);
         this._gameState = this._CheckWinner(x, y);
+    }
+    _AddMove(x: number, y: number, player: number) {
+        this._moves.push({ x: x, y: y, player: player });
     }
     _CheckWinner(x: number, y: number) {
         const tile = this._board[y][x];
-        const player = tile.owner == "x" ? 0 : 1;
+        const player = tile.owner;
         const winningCount = 5;
         for(let k = 0; k < 4; ++k) {
             const l = (k + 4) % 8;
@@ -117,27 +107,62 @@ class BoardController extends Component {
                 }
                 return {
                     winner: tile.owner,
-                    tiles: winningTiles
+                    winningTiles: winningTiles
                 }
             }
         }
         return {
-            winner: "-",
-            tiles: []
+            winner: -1,
+            winningTiles: []
         };
     }
+    _IsGameOver() {
+        return this._gameState.winner != -1 && this._moves.length < this._size ** 2;
+    }
+    _Play(x: number, y: number) {
+        if(this._players[this._playerOn] == null) {
+            return;
+        }
+        this._Insert(x, y, this._playerOn);
+        if(!this._IsGameOver()) {
+            this.playerOn = (this._playerOn + 1) % 2;
+            this.NextPlayer();
+        } else {
+            ++this._players[this._playerOn].score;
+            const camera = this._parent._scene._camera;
+            camera.ScaleTo(1, 500);
+            camera.MoveTo(new Vector(), 500);
+        }
+    }
+    NextPlayer() {
+        this._players[this._playerOn].player.Play();
+    }
+    SetPlayerX(player: Player) {
+        this._players[0] = {player: player, score: 0};
+        player._symbol = "x";
+        player._board = this;
+        document.getElementById("playerX").textContent = player._name;
+    }
+    SetPlayerO(player: Player) {
+        this._players[1] = {player: player, score: 0};
+        player._symbol = "o";
+        player._board = this;
+        document.getElementById("playerO").textContent = player._name;
+    }
     Reset() {
-        this._moves = 0;
+        this._TogglePlayers();
+        this.playerOn = this._startingPlayer;
         this._selectedTile = null;
+        this._moves = [];
         this._gameState = {
-            winner: "-",
-            tiles: []
+            winner: -1,
+            winningTiles: []
         };
 
         for(let i = 0; i < this._size; ++i) {
             for(let j = 0; j < this._size; ++j) {
                 const tile = this._board[i][j];
-                tile.owner = "-";
+                tile.owner = -1;
                 for(let data of tile._data) {
                     for(let k = 0; k < 8; ++k) {
                         data.connected[k] = 0;
@@ -152,55 +177,36 @@ class BoardController extends Component {
                 }
             }
         }
-        this.TogglePlayers();
+    }
+    _TogglePlayers() {
+        this._startingPlayer = (this._startingPlayer + 1) % 2;
     }
     OnMouseup(mouseX: number, mouseY: number) {
-        
-        if(this._players[this._playerOn].player.constructor.name == "Bot" || this._gameState.winner != "-") {
+        if(this._players[this._playerOn] == null) {
             return;
         }
-        const body = this.GetComponent("body") as Box;
+        if(this._players[this._playerOn].player.constructor.name == "Human") {
+            const body = this.GetComponent("body") as Box;
 
-        const x = Math.floor((mouseX + body._width / 2 - body._pos.x) / body._width * this._size);
-        const y = Math.floor((mouseY + body._height / 2 - body._pos.y) / body._height * this._size);
+            const x = Math.floor((mouseX + body._width / 2 - body._pos.x) / body._width * this._size);
+            const y = Math.floor((mouseY + body._height / 2 - body._pos.y) / body._height * this._size);
         
-        const tile = this._board[y][x];
-        if(tile.owner != "-") {
-            return;
-        }
-        if(this._selectedTile === null || this._selectedTile != tile) {
-            this._selectedTile = tile;
-        } else {
-            this.Play(x, y);
+            const tile = this._board[y][x];
+            if(tile.owner != -1) {
+                return;
+            }
+            if(this._selectedTile === null || this._selectedTile != tile) {
+                this._selectedTile = tile;
+            } else {
+                (this._players[this._playerOn].player as Human).OnInput(x, y);
+            }
         }
     }
-    Play(x: number, y: number) {
-        if(this._players[this._playerOn] == null || this._moves >= this._size * this._size) {
-            return;
-        }
-
-        this.Insert(x, y, this._playerOn);
-        ++this._moves;
-        
-        if(this._gameState.winner != "-") {
-            return;
-        }
-        this.playerOn = this._playerOn == 0 ? "o" : "x";
-
-        this.NextPlayer();
-    }
-    NextPlayer() {
-        this._players[this._playerOn].player.Play();
-    }
-    TogglePlayers() {
-        this._startingPLayer = this._startingPLayer == "x" ? "o" : "x";
-        this.playerOn = this._startingPLayer;
-    }
-    set playerOn(player: string) {
-        this._playerOn = player == "x" ? 0 : 1;
-        const otherPlayer = player == "x" ? "o" : "x";
-        document.getElementById("player" + player.toUpperCase()).parentElement.classList.add("player_active");
-        document.getElementById("player" + otherPlayer.toUpperCase()).parentElement.classList.remove("player_active");
+    set playerOn(player: number) {
+        this._playerOn = player;
+        const [symbol, otherSymbol] = player == 0 ? ["x", "o"] : ["o", "x"];
+        document.getElementById("player" + symbol.toUpperCase()).parentElement.classList.add("player_active");
+        document.getElementById("player" + otherSymbol.toUpperCase()).parentElement.classList.remove("player_active");
     }
 }
 
@@ -212,13 +218,13 @@ type data = {
 class Tile {
     x: number;
     y: number;
-    owner: string;
+    owner: number;
     _data: data[];
     _nb: Tile[];
     constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
-        this.owner = "-";
+        this.owner = -1;
         this._nb = [...new Array(8)].fill(null);
         this._data = [...new Array(2)].map((_: any) => {
             return {

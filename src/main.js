@@ -69,6 +69,7 @@ class Game {
     _Init() {
         const eventByDevice = navigator.userAgent.match(/ipod|ipad|iphone/i) ? "touchstart" : "click";
         document.querySelector(".credit").style.display = "none";
+        document.querySelector(".info").style.display = "none";
         this._renderer = new Renderer(480, 720, document.querySelector(".gameContainer"), document.getElementById("game"));
         this._renderer.bgColor = "rgb(255, 255, 255)";
         this._InitBoard();
@@ -92,12 +93,15 @@ class Game {
         document.getElementById("playBtn2").addEventListener(eventByDevice, () => {
             StartGame(new player.Human("Player 1"), new player.Human("Player 2"));
         });
-        document.getElementById("playBtn3").addEventListener(eventByDevice, () => {
-            StartGame(new player.Bot("Bot 1"), new player.Bot("Bot 2"));
-        });
         document.getElementById("creditBtn").addEventListener(eventByDevice, () => {
             document.querySelector(".menuList").style.display = "none";
             document.querySelector(".credit").style.display = "block";
+        });
+        document.getElementById("infoBtn").addEventListener(eventByDevice, () => {
+            document.querySelector(".info").style.display = "block";
+        });
+        document.getElementById("backBtn-info").addEventListener(eventByDevice, () => {
+            document.querySelector(".info").style.display = "none";
         });
         document.getElementById("backBtn").addEventListener(eventByDevice, () => {
             document.querySelector(".menuList").style.display = "block";
@@ -119,6 +123,7 @@ class Game {
             const boardController = this._renderer.scenes.currentScene.Get("board").GetComponent("BoardController");
             boardController.Reset();
             boardController.NextPlayer();
+            this._renderer.scenes.currentScene._camera.Reset();
         });
         document.getElementById("back-btn").addEventListener(eventByDevice, () => {
             document.querySelector(".mainMenu").style.display = "block";

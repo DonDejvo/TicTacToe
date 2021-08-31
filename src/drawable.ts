@@ -95,8 +95,8 @@ class TicTacToeGrid extends Drawable {
         ctx.translate(-this._width / 2, -this._height / 2);
 
         const controller = this.GetComponent("BoardController") as BoardController;
-        if(controller._gameState.winner != "-") {
-            for(let tile of controller._gameState.tiles) {
+        if(controller._gameState.winner != -1) {
+            for(let tile of controller._gameState.winningTiles) {
                 ctx.fillStyle = "yellow";
             ctx.fillRect(tile.x * this._cellWidth, tile.y * this._cellHeight, this._cellWidth, this._cellHeight);
             }
@@ -121,10 +121,10 @@ class TicTacToeGrid extends Drawable {
         for(let i = 0; i < this._size; ++i) {
             for(let j = 0; j < this._size; ++j) {
                 switch(controller._board[i][j].owner) {
-                    case "x":
+                    case 0:
                         this._DrawX(ctx, j, i);
                         break;
-                    case "o":
+                    case 1:
                         this._DrawO(ctx, j, i);
                         break;
                 }

@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe</title>
+    <title>Gomoku</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,7 +19,7 @@
         </div>
         <div class="mainMenu">
             <div class="vertically-centered text-centered">
-                <h1 class="gameTitle">Tic Tac Toe</h1>
+                <h1 class="gameTitle">Gomoku</h1>
                 <ul class="menuList">
                     <li>
                         <div class="menuButton" id="playBtn">
@@ -32,8 +32,8 @@
                         </div>
                     </li>
                     <li>
-                        <div class="menuButton" id="playBtn3">
-                            <span>Bot vs Bot</span>
+                        <div class="menuButton" id="infoBtn">
+                            <span>Info</span>
                         </div>
                     </li>
                     <li>
@@ -43,11 +43,22 @@
                     </li>
                 </ul>
                 <div class="credit">
-                    <p>This project is free to use for personal purposes. <br>No direct copying is allowed. <br><br>Created by DonDejvo (David Dolejsi). <br>Started: 26.08.2021 <br>Finished: 28.08.2021</p>
+                    <p>This application was made by DonDejvo (David Dolejsi) as final assignment for Programming II course.<br><br>Started: 26.08.2021<br>Finished: 30.08.2021<br><br>All content is free for personal use if you wish to use it for comercial purposes, contact me please.</p>
                     <div class="menuButton" id="backBtn">
                         <span>Back</span>
                     </div>
                 </div>
+            </div>
+            <div class="info">
+                <div>
+                    <h2>1. About Gomoku</h2>
+                    <p>Gomoku (Five in a Row) is a well known board game. The board has 15 rows and 15 columns. One player has crosses, the other has circles. Players alternate in placing crosses or circles on the empty tiles on the board. The winner is the first player to get a row of five shapes horizontally, vertically or diagonally.</p>
+                    <h2>2. Before you start the game</h2>
+                    <p>If you want ot play against phone, press <u>Player vs Bot</u>. If you want to play against another player, select <u>Player vs Player</u>.</p>
+                    <h2>3. Control of the game</h2>
+                    <p>In the top bar, there are shown labels of players and their shapes. The starting player cahnges each game. The player who is just playing is highlighted on the bar with yellow color. To put a stone (cross, circle), you have to click anywhere on the board. The board zooms at the place where you clicked and the field is marked by yellow color. By the second click you put the stone. In the bottom of the screen you can find buttons controlling the game. There are buttons for zoom and unzoom in the left. By clicking New Game button, you give up current match and new one is automatically started. Last button serves for returning to main menu.</p>
+                </div>
+                <button id="backBtn-info">Back</button>
             </div>
         </div>
         <div>
