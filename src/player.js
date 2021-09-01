@@ -105,8 +105,6 @@ class Bot extends Player {
                                     value = 75000;
                                 else if (count == 2 && newBothSidesOpen)
                                     value = 50000;
-                                else if (count == 2)
-                                    value = 35000;
                                 else if (connected == 1 && bothSidesOpen)
                                     value = 20000;
                                 else if (count == 1 && newBothSidesOpen)
@@ -136,13 +134,13 @@ class Bot extends Player {
                     else if (tileValue["own3"] > 0 && (tileValue["own3"] > 1 || tileValue["own2open"] > 0))
                         resultValue = 2000000;
                     else if ((tileValue["own3"] > 0 && tileValue["other3"] > 0) || ((tileValue["own3"] > 0 || tileValue["other3"] > 0) && (tileValue["own2open"] > 0 || tileValue["other2open"] > 0)))
-                        resultValue = 40000;
+                        resultValue = 10000;
                     else if (tileValue["own2open"] > 1)
-                        resultValue = 20000;
+                        resultValue = 5000;
                     else if (tileValue["other2open"] > 1)
-                        resultValue = 16000;
+                        resultValue = 4000;
                     else if (tileValue["own2open"] > 0 && tileValue["other2open"] > 0)
-                        resultValue = 12000;
+                        resultValue = 3000;
                     resultValue += tileValue["rest"];
                     resultValue += Math.floor(tileValue["free"] / 5);
                     if (!bestMoves.length || resultValue > currentValue) {
