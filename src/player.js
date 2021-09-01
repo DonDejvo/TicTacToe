@@ -136,13 +136,13 @@ class Bot extends Player {
                     else if (tileValue["own3"] > 0 && (tileValue["own3"] > 1 || tileValue["own2open"] > 0))
                         resultValue = 2000000;
                     else if ((tileValue["own3"] > 0 && tileValue["other3"] > 0) || ((tileValue["own3"] > 0 || tileValue["other3"] > 0) && (tileValue["own2open"] > 0 || tileValue["other2open"] > 0)))
-                        resultValue = 10000;
+                        resultValue = 40000;
                     else if (tileValue["own2open"] > 1)
-                        resultValue = 5000;
+                        resultValue = 20000;
                     else if (tileValue["other2open"] > 1)
-                        resultValue = 4000;
+                        resultValue = 16000;
                     else if (tileValue["own2open"] > 0 && tileValue["other2open"] > 0)
-                        resultValue = 3000;
+                        resultValue = 12000;
                     resultValue += tileValue["rest"];
                     resultValue += Math.floor(tileValue["free"] / 5);
                     if (!bestMoves.length || resultValue > currentValue) {
