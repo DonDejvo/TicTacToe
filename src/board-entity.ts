@@ -199,6 +199,8 @@ class BoardController extends Component {
                 this._selectedTile = tile;
             } else {
                 (this._players[this._playerOn].player as Human).OnInput(x, y);
+                const camera = this._parent._scene._camera;
+                camera.ScaleTo(1, 300);
             }
         }
     }

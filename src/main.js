@@ -26,8 +26,8 @@ class Game {
                 return;
             }
             if (gameScene._camera._scale != 2 && !gameScene._camera.scaling) {
-                gameScene._camera.MoveTo(boardController.mousedownPosition, 500);
-                gameScene._camera.ScaleTo(2, 500);
+                gameScene._camera.MoveTo(boardController.mousedownPosition, 300);
+                gameScene._camera.ScaleTo(2, 300);
             }
             boardController.OnMouseup(params.x, params.y);
         });
@@ -110,13 +110,13 @@ class Game {
         document.getElementById("zoom_out-btn").addEventListener(eventByDevice, () => {
             const camera = this._renderer.scenes.currentScene._camera;
             if (!camera.scaling) {
-                camera.ScaleTo(1, 500);
+                camera.ScaleTo(1, 300);
             }
         });
         document.getElementById("zoom_in-btn").addEventListener(eventByDevice, () => {
             const camera = this._renderer.scenes.currentScene._camera;
             if (!camera.scaling) {
-                camera.ScaleTo(2, 500);
+                camera.ScaleTo(2, 300);
             }
         });
         document.getElementById("give_up-btn").addEventListener(eventByDevice, () => {

@@ -184,6 +184,8 @@ class BoardController extends Component {
             }
             else {
                 this._players[this._playerOn].player.OnInput(x, y);
+                const camera = this._parent._scene._camera;
+                camera.ScaleTo(1, 300);
             }
         }
     }
