@@ -89,8 +89,10 @@ img {
 .menuButton span {
     width: 100%;
     display: inline-block;
-    padding-top: 2px;
-    padding-bottom: 2px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    line-height: 24px;
+    font-size: 24px;
     border: 2px solid blue;
     background: white;
     color: red;
@@ -171,6 +173,11 @@ img {
 
 .player_active {
     background: rgba(255, 255, 0, 0.6);
+}
+
+.credit {
+    font-size: 24px;
+    line-height: 36px;
 }
 
 .credit > p {
