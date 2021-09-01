@@ -79,7 +79,7 @@ class TicTacToeGrid extends Drawable {
             ctx.fillRect(controller._selectedTile.x * this._cellWidth, controller._selectedTile.y * this._cellHeight, this._cellWidth, this._cellHeight);
         }
         ctx.strokeStyle = "black";
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1;
         for (let i = 0; i <= this._size; ++i) {
             const x = i * this._cellWidth;
             ctx.moveTo(x, 0);
