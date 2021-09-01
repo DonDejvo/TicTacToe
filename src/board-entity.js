@@ -117,8 +117,8 @@ class BoardController extends Component {
         else {
             ++this._players[this._playerOn].score;
             const camera = this._parent._scene._camera;
-            camera.ScaleTo(1, 500);
-            camera.MoveTo(new Vector(), 500);
+            camera.ScaleTo(1, 300);
+            camera.MoveTo(new Vector(), 300);
         }
     }
     NextPlayer() {
