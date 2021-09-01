@@ -1,0 +1,31 @@
+
+This program offers classical Gomoku against computer or real player.
+If you are familiar with Gomoku rules, you can skip the following part. (Rules are also available in the game itself)
+
+
+About Gomoku
+
+Gomoku (Five in a Row) is a well-known board game. The board has 15 rows and 15 columns. One player has crosses, the other has circles. Players alternate in placing crosses or circles on the empty tiles on the board. The winner is the first player to get a row of five shapes horizontally, vertically, or diagonally.
+
+
+Application structure
+
+All scripts are stored in src folder and most of them care of GUI, interactivity, app structure, loading, and other stuff.
+All parts of game logic are stored inside board-entity.ts and bot player can be found inside player.ts
+
+
+Board controller
+
+board-entity.ts contains BoardController class and Tile class
+board controller cares about inserting shapes into the board, handles new game initializing and game state - switches between players, checks for winner. In the end, it also takes care of players.
+tile holds aside shape info about neighbor tiles and important data for both shapes for all directions about number of free tiles, e.g. for x number of tiles up to the first tile with o, and number of connected tiles with same shape
+board is stored in 2d array containing tiles
+when the application is started everything is initialized
+inserting shapes also care about updating tile data
+
+Players
+
+the important class in player.ts is Bot class
+it has _Think method which defines computer behavior
+this method goes through all positions and rates them all, finally picks 1 or more with the highest score
+it read from tile data to know the current situation on the given place - it has defined static values for different combinations of shapes there

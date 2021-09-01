@@ -19,6 +19,7 @@ class BoardController extends Component {
         this._players = [null, null];
         this._startingPlayer = 1;
         this._playerOn = this._startingPlayer;
+        // create tiles and set their neighbors
         for (let i = 0; i < this._size; ++i) {
             for (let j = 0; j < this._size; ++j) {
                 const tile = this._board[i][j];
@@ -41,6 +42,7 @@ class BoardController extends Component {
             }
         }
     }
+    // inserts shape of player into given position on the board and updates tile data
     _Insert(x, y, player) {
         const otherPlayer = player == 0 ? 1 : 0;
         const tile = this._board[y][x];
@@ -148,19 +150,7 @@ class BoardController extends Component {
         for (let i = 0; i < this._size; ++i) {
             for (let j = 0; j < this._size; ++j) {
                 const tile = this._board[i][j];
-                tile.owner = -1;
-                for (let data of tile._data) {
-                    for (let k = 0; k < 8; ++k) {
-                        data.connected[k] = 0;
-                        let n = 0;
-                        let nextTile = tile._nb[k];
-                        while (nextTile) {
-                            ++n;
-                            nextTile = nextTile._nb[k];
-                        }
-                        data.free[k] = n;
-                    }
-                }
+                tile.Reset();
             }
         }
     }
@@ -208,6 +198,21 @@ class Tile {
                 connected: [...new Array(8)].fill(0)
             };
         });
+    }
+    Reset() {
+        this.owner = -1;
+        for (let data of this._data) {
+            for (let k = 0; k < 8; ++k) {
+                data.connected[k] = 0;
+                let n = 0;
+                let nextTile = this._nb[k];
+                while (nextTile) {
+                    ++n;
+                    nextTile = nextTile._nb[k];
+                }
+                data.free[k] = n;
+            }
+        }
     }
 }
 export { BoardController, Tile };

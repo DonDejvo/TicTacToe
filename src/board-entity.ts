@@ -6,15 +6,23 @@ import { Vector } from "./vector.js";
 type player = { player: Player, score: number }
 
 class BoardController extends Component {
+    // these 2 things help with handling mouse events
     mouseMoved: boolean;
     mousedownPosition: Vector;
     _size: number;
+    // current state of board 
     _board: Tile[][];
+    // selected tile by player is highlighted by yellow color
     _selectedTile: Tile;
+    // info about winner
     _gameState: { winner: number, winningTiles: Tile[] }
+    // all moves from beginning
     _moves: { x: number, y: number, player: number }[]
+    // player having x on index 0 and player with o on index 1
     _players: player[];
+    // who begins
     _startingPlayer: number;
+    // playing player
     _playerOn: number;
     constructor() {
         super();
@@ -35,6 +43,7 @@ class BoardController extends Component {
         this._startingPlayer = 1;
         this._playerOn = this._startingPlayer;
 
+        // create tiles and set their neighbors
         for(let i = 0; i < this._size; ++i) {
             for(let j = 0; j < this._size; ++j) {
                 const tile = this._board[i][j];
@@ -50,6 +59,7 @@ class BoardController extends Component {
         }
 
     }
+    // inserts shape of player into given position on the board and updates tile data
     _Insert(x: number, y: number, player: number) {
         const otherPlayer = player == 0 ? 1 : 0;
         const tile = this._board[y][x];
@@ -162,19 +172,7 @@ class BoardController extends Component {
         for(let i = 0; i < this._size; ++i) {
             for(let j = 0; j < this._size; ++j) {
                 const tile = this._board[i][j];
-                tile.owner = -1;
-                for(let data of tile._data) {
-                    for(let k = 0; k < 8; ++k) {
-                        data.connected[k] = 0;
-                        let n = 0;
-                        let nextTile = tile._nb[k];
-                        while(nextTile) {
-                            ++n;
-                            nextTile = nextTile._nb[k];
-                        }
-                        data.free[k] = n;
-                    }
-                }
+                tile.Reset();
             }
         }
     }
@@ -218,10 +216,14 @@ type data = {
 }
 
 class Tile {
+    // position
     x: number;
     y: number;
+    // -1 if empty, 0 for x and 1 for o
     owner: number;
+    // on 0 index data for x, on 1 index for o; for all directions data contains number of free tiles, e.g. for x number of tiles up to first tile with o, and number of connected tiles with same shape
     _data: data[];
+    // neighbor tiles
     _nb: Tile[];
     constructor(x: number, y: number) {
         this.x = x;
@@ -235,6 +237,21 @@ class Tile {
             };
         });
         
+    }
+    Reset() {
+        this.owner = -1;
+        for (let data of this._data) {
+            for (let k = 0; k < 8; ++k) {
+                data.connected[k] = 0;
+                let n = 0;
+                let nextTile = this._nb[k];
+                while (nextTile) {
+                    ++n;
+                    nextTile = nextTile._nb[k];
+                }
+                data.free[k] = n;
+            }
+        }
     }
 }
 
