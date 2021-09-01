@@ -63,7 +63,7 @@ img {
     height: 100%;
     color: blue;
     background-color: white;
-    background-image: linear-gradient(rgba(0, 0, 0, .4) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, .4) 1px, transparent 1px);
+    background-image: linear-gradient(rgba(0, 0, 0, .4) .1em, transparent .1em), linear-gradient(90deg, rgba(0, 0, 0, .4) .1em, transparent .1em);
   background-size: 24px 24px;
 }
 
